@@ -7,24 +7,26 @@ the getter, setter, and predicate for each column.
 
 ## Usage
 
-    class Parent < ActiveRecord::Base
-      has_one :child
-      # columns: name
-      delegate_all_for :child, except: [:sort], also_include: [:extra_method]
-    end
+```ruby
+class Parent < ActiveRecord::Base
+  has_one :child
+  # columns: name
+  delegate_all_for :child, except: [:sort], also_include: [:extra_method]
+end
 
-    class Child < ActiveRecord::Base
-      belongs_to :parent
-      # columns: name, description, sort
-      def extra_method; 'a little extra' end
-    end
+class Child < ActiveRecord::Base
+  belongs_to :parent
+  # columns: name, description, sort
+  def extra_method; 'a little extra' end
+end
 
-    Parent.new.description # Delegated to Child
-    Parent.new.description? # Delegated to Child
-    Parent.new.description= # Delegated to Child
-    Parent.new.extra_method # Delegated to Child
-    Parent.new.name # Still comes from Parent
-    Parent.new.sort # method_missing
+Parent.new.description # Delegated to Child
+Parent.new.description? # Delegated to Child
+Parent.new.description= # Delegated to Child
+Parent.new.extra_method # Delegated to Child
+Parent.new.name # Still comes from Parent
+Parent.new.sort # method_missing
+```
 
 ## Installation
 
