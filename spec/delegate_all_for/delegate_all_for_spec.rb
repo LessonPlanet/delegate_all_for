@@ -1,7 +1,5 @@
 require File.expand_path('../../spec_helper', __FILE__)
 
-# Still need to figure out how to get this to work
-=begin
 class Parent < ActiveRecord::Base
   def self.column_names; %w(one two) end
 
@@ -31,4 +29,3 @@ describe DelegateAllFor do
     its(:two) { should == 'parent' }
   end
 end
-=end
