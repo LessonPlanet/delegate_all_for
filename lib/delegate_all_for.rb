@@ -22,17 +22,17 @@ module DelegateAllFor
     options.assert_valid_keys(:except, :also_include)
 
     exclude_columns = self.column_names.dup.concat(options[:except].map(&:to_s))
-    puts exclude_columns.inspect
     attr_names.each do |association_name|
       if reflection = reflect_on_association(association_name)
         options[:also_include].each do |m|
           class_eval(%{delegate :#{m}, :to => :#{association_name}})
         end
-        puts (reflection.klass.column_names - exclude_columns).inspect
         (reflection.klass.column_names - exclude_columns).each do |column_name|
-          class_eval(%{delegate :#{column_name}, :to => :#{association_name}})
-          class_eval(%{delegate :#{column_name}=, :to => :#{association_name}})
-          class_eval(%{delegate :#{column_name}?, :to => :#{association_name}})
+          class_eval <<-eoruby, __FILE__, __LINE__ + 1
+            delegate :#{column_name}, :to => :#{association_name}
+            delegate :#{column_name}=, :to => :#{association_name}
+            delegate :#{column_name}?, :to => :#{association_name}
+          eoruby
         end
       else
         raise ArgumentError, "No association found for name `#{association_name}'. Has it been defined yet?"
