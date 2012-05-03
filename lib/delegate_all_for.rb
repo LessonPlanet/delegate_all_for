@@ -9,7 +9,7 @@ $LOAD_PATH.shift
 
 module DelegateAllFor
   # For all columns of the specified association to the current object,
-  # the getter, setter, and predicate are delegated.
+  # the reader, writer, and predicate methods are delegated.
   #
   # Supported options:
   # [:except]

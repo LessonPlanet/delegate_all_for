@@ -34,8 +34,22 @@ describe DelegateAllFor do
         lambda { subject.three = 'THREE' }.should raise_error NoMethodError
       end
     end
-    its(:four)  { should == 'four' }
-    its(:extra) { should be_true }
-    its(:two)   { should == 'parent' }
+
+    context 'delegates to child attributes' do
+      its(:four)  { should == 'four' }
+      its(:extra) { should be_true }
+      its(:two)   { should == 'parent' }
+    end
+
+    context 'guards against user error' do
+      it 'notices when an association is wrong' do
+        lambda do
+          class Parent < ActiveRecord::Base
+            has_one :child
+            delegate_all_for :foo
+          end
+        end.should raise_error ArgumentError
+      end
+    end
   end
 end
