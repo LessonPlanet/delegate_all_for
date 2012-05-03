@@ -24,13 +24,13 @@ describe DelegateAllFor do
     end
 
     context 'does not respond to three' do
-      it 'accessor' do
+      it 'reader' do
         lambda { subject.three }.should raise_error NoMethodError
       end
       it 'predicate' do
         lambda { subject.three? }.should raise_error NoMethodError
       end
-      it 'setter' do
+      it 'writer' do
         lambda { subject.three = 'THREE' }.should raise_error NoMethodError
       end
     end
