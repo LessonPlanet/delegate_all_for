@@ -39,6 +39,10 @@ describe DelegateAllFor do
       its(:four)  { should == 'four' }
       its(:extra) { should be_true }
       its(:two)   { should == 'parent' }
+
+      it 'does not delegate to association attributes' do
+        lambda { subject.parent_id }.should raise_error NoMethodError
+      end
     end
 
     context 'guards against user error' do
