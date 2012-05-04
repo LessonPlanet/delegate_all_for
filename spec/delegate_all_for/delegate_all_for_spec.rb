@@ -43,6 +43,10 @@ describe DelegateAllFor do
       it 'does not delegate to association attributes' do
         lambda { subject.parent_id }.should raise_error NoMethodError
       end
+
+      it 'does not delegate to timestamp attributes' do
+        lambda { subject.created_at }.should raise_error NoMethodError
+      end
     end
 
     context 'guards against user error' do
