@@ -28,7 +28,7 @@ module DelegateAllFor
           class_eval(%{delegate :#{m}, :to => :#{association_name}})
         end
         (reflection.klass.column_names - exclude_columns).each do |column_name|
-          next if column_name =~ /_(id|at|on)$/
+          next if column_name.in?(reflection.foreign_key, 'updated_at', 'updated_on', 'created_at', 'created_on')
           class_eval <<-eoruby, __FILE__, __LINE__ + 1
             delegate :#{column_name}, :to => :#{association_name}
             delegate :#{column_name}=, :to => :#{association_name}
