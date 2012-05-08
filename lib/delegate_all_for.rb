@@ -16,23 +16,28 @@ module DelegateAllFor
   #   An array of column names to exclude from delegation
   # [:also_include]
   #   An array of method names to also delegate
+  # [:prefix]
+  #   Prefixes accessors.  See the <tt>delegate</tt> documentation.
+  # [:allow_nil]
+  #   Allows accessor to be nil.  See the <tt>delegate</tt> documentation.
   def delegate_all_for(*attr_names)
-    options = { except: [], also_include: [] }
+    options = { except: [], also_include: [], prefix: false, allow_nil: false }
     options.update(attr_names.extract_options!)
-    options.assert_valid_keys(:except, :also_include)
+    options.assert_valid_keys(:except, :also_include, :prefix, :allow_nil)
 
     exclude_columns = self.column_names.dup.concat(options[:except].map(&:to_s))
     attr_names.each do |association_name|
       if reflection = reflect_on_association(association_name)
+        delegate_opts = options.slice(:prefix, :allow_nil).merge(to: association_name)
         options[:also_include].each do |m|
-          class_eval(%{delegate :#{m}, :to => :#{association_name}})
+          class_eval(%{delegate :#{m}, #{delegate_opts}})
         end
         (reflection.klass.column_names - exclude_columns).each do |column_name|
           next if column_name.in?(reflection.foreign_key, 'updated_at', 'updated_on', 'created_at', 'created_on')
           class_eval <<-eoruby, __FILE__, __LINE__ + 1
-            delegate :#{column_name}, :to => :#{association_name}
-            delegate :#{column_name}=, :to => :#{association_name}
-            delegate :#{column_name}?, :to => :#{association_name}
+            delegate :#{column_name},  #{delegate_opts}
+            delegate :#{column_name}=, #{delegate_opts}
+            delegate :#{column_name}?, #{delegate_opts}
           eoruby
         end
       else

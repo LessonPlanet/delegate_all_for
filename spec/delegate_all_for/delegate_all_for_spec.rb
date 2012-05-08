@@ -9,7 +9,7 @@ end
 
 class Parent < ActiveRecord::Base
   has_one :child
-  delegate_all_for :child, except: [:three], also_include: [:extra]
+  delegate_all_for :child, except: [:three], also_include: [:extra], allow_nil: true
   def two; 'parent' end
 end
 
@@ -23,7 +23,7 @@ describe DelegateAllFor do
       end
     end
 
-    context 'does not respond to three' do
+    describe ':except option' do
       it 'reader' do
         lambda { subject.three }.should raise_error NoMethodError
       end
@@ -35,9 +35,17 @@ describe DelegateAllFor do
       end
     end
 
-    context 'delegates to child attributes' do
-      its(:four)  { should == 'four' }
+    describe ':also_include option' do
       its(:extra) { should be_true }
+    end
+
+    describe ':allow_nil option' do
+      subject { Parent.new }
+      its(:four) { should be_nil }
+    end
+
+    describe 'delegates to child attributes' do
+      its(:four)  { should == 'four' }
       its(:two)   { should == 'parent' }
 
       it 'does not delegate to association attributes' do
@@ -49,7 +57,7 @@ describe DelegateAllFor do
       end
     end
 
-    context 'guards against user error' do
+    describe 'guards against user error' do
       it 'notices when an association is wrong' do
         lambda do
           class Parent < ActiveRecord::Base
