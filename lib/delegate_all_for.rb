@@ -41,20 +41,7 @@ module DelegateAllFor
           class_eval <<-eoruby, __FILE__, __LINE__ + 1
             delegate :#{method},  #{delegate_opts}
             delegate :#{method}?, #{delegate_opts}
-          eoruby
-
-          # Create the setter with support for using nested attributes to set it if the delegated object is not present
-          exception = %(raise "#{self}##{method_prefix}#{method} delegated to #{to}.#{method}, but #{to} is nil: \#{self.inspect}")
-          class_eval <<-eoruby, __FILE__, __LINE__ + 1
-            def #{method_prefix}#{method}=(*args, &block)                             # def customer_name(*args, &block)
-              if #{to} || #{to}.respond_to?(:#{method})                               #   if client || client.respond_to?(:name)
-                #{to}.__send__(:#{method}=, *args, &block)                            #     client.__send__(:name, *args, &block)
-              elsif self.respond_to?(:#{to}_attributes=)                              #   elsif self.respond_to?(:client_attributes=)
-                self.__send__(:#{to}_attributes=, :#{method} => args.first, &block)   #     self.__send__(:client_attributes=, :name => args.first, &block)
-              else                                                                    #   else
-                #{exception}                                                          #     # add helpful exception
-              end                                                                     #   end
-            end                                                                       # end
+            delegate :#{method}=, #{delegate_opts.merge(allow_nil: false)} # allow_nil true leads to unintuitive behavior
           eoruby
         end
       else
