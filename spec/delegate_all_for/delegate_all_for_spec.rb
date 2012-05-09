@@ -42,9 +42,6 @@ describe DelegateAllFor do
     describe ':allow_nil option' do
       subject { Parent.new }
       its(:four) { should be_nil }
-      it 'writer' do
-        lambda { subject.four = 'FOUR' }.should raise_error RuntimeError
-      end
     end
 
     describe 'delegates to child attributes' do
@@ -57,6 +54,29 @@ describe DelegateAllFor do
 
       it 'does not delegate to timestamp attributes' do
         lambda { subject.created_at }.should raise_error NoMethodError
+      end
+
+      describe 'writer' do
+        it 'sets the value using delegation if child is set' do
+          subject.child.should be_an_instance_of(Child)
+          subject.four = 'FOUR'
+          subject.four.should == 'FOUR'
+          subject.child.four.should == 'FOUR'
+        end
+
+        it 'sets the value using nested attributes if child is not set and nested attributes are supported' do
+          class NestedParent < Parent; accepts_nested_attributes_for :child end
+          subject = NestedParent.new
+          subject.four = 'FOUR'
+          subject.child.should be_an_instance_of(Child)
+          subject.four.should == 'FOUR'
+          subject.child.four.should == 'FOUR'
+        end
+
+        it 'raises an exception if child is not set' do
+          subject = Parent.new
+          lambda { subject.four = 'FOUR' }.should raise_error RuntimeError
+        end
       end
     end
 

@@ -28,16 +28,33 @@ module DelegateAllFor
     exclude_columns = self.column_names.dup.concat(options[:except].map(&:to_s))
     attr_names.each do |association_name|
       if reflection = reflect_on_association(association_name)
-        delegate_opts = options.slice(:prefix, :allow_nil).merge(to: association_name)
+        to = association_name
+        delegate_opts = options.slice(:prefix, :allow_nil).merge(to: to)
+        method_prefix = delegate_opts[:prefix] ? "#{prefix == true ? to : prefix}_" : ''
+
         options[:also_include].each do |m|
           class_eval(%{delegate :#{m}, #{delegate_opts}})
         end
-        (reflection.klass.column_names - exclude_columns).each do |column_name|
-          next if column_name.in?(reflection.foreign_key, 'updated_at', 'updated_on', 'created_at', 'created_on')
+
+        (reflection.klass.column_names - exclude_columns).each do |method|
+          next if method.in?(reflection.foreign_key, 'updated_at', 'updated_on', 'created_at', 'created_on')
           class_eval <<-eoruby, __FILE__, __LINE__ + 1
-            delegate :#{column_name},  #{delegate_opts}
-            delegate :#{column_name}?, #{delegate_opts}
-            delegate :#{column_name}=, #{delegate_opts.merge(allow_nil: false)} # allow_nil on setters leads to uninituitive behavior
+            delegate :#{method},  #{delegate_opts}
+            delegate :#{method}?, #{delegate_opts}
+          eoruby
+
+          # Create the setter with support for using nested attributes to set it if the delegated object is not present
+          exception = %(raise "#{self}##{method_prefix}#{method} delegated to #{to}.#{method}, but #{to} is nil: \#{self.inspect}")
+          class_eval <<-eoruby, __FILE__, __LINE__ + 1
+            def #{method_prefix}#{method}=(*args, &block)                             # def customer_name(*args, &block)
+              if #{to} || #{to}.respond_to?(:#{method})                               #   if client || client.respond_to?(:name)
+                #{to}.__send__(:#{method}=, *args, &block)                            #     client.__send__(:name, *args, &block)
+              elsif self.respond_to?(:#{to}_attributes=)                              #   elsif self.respond_to?(:client_attributes=)
+                self.__send__(:#{to}_attributes=, :#{method} => args.first, &block)   #     self.__send__(:client_attributes=, :name => args.first, &block)
+              else                                                                    #   else
+                #{exception}                                                          #     # add helpful exception
+              end                                                                     #   end
+            end                                                                       # end
           eoruby
         end
       else
