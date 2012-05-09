@@ -36,8 +36,8 @@ module DelegateAllFor
           next if column_name.in?(reflection.foreign_key, 'updated_at', 'updated_on', 'created_at', 'created_on')
           class_eval <<-eoruby, __FILE__, __LINE__ + 1
             delegate :#{column_name},  #{delegate_opts}
-            delegate :#{column_name}=, #{delegate_opts}
             delegate :#{column_name}?, #{delegate_opts}
+            delegate :#{column_name}=, #{delegate_opts.merge(allow_nil: false)} # allow_nil on setters leads to uninituitive behavior
           eoruby
         end
       else

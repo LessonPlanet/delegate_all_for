@@ -42,6 +42,9 @@ describe DelegateAllFor do
     describe ':allow_nil option' do
       subject { Parent.new }
       its(:four) { should be_nil }
+      it 'writer' do
+        lambda { subject.four = 'FOUR' }.should raise_error RuntimeError
+      end
     end
 
     describe 'delegates to child attributes' do
