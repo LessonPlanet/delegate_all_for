@@ -52,4 +52,4 @@ Or install it yourself as:
 
 ## Credits
 
-* Inspiration for how to do it came from ["Delegating Your Attributes"](http://killswitchcollective.com/articles/21_delegating_your_attributes)
+* Inspiration for how to do it came from [Delegating Your Attributes](http://killswitchcollective.com/articles/21_delegating_your_attributes)
