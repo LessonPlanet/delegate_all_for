@@ -1,4 +1,4 @@
-# DelegateAllFor
+# delegate_all_for
 
 The primary driver for creating this gem was to create an easy way to accomplish the
 [Multiple Table Inheritance](http://techspry.com/ruby_and_rails/multiple-table-inheritance-in-rails-3/)
