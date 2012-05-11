@@ -1,9 +1,9 @@
 # DelegateAllFor
 
-Inspired by the ["Delegating Your
-Attributes"](http://killswitchcollective.com/articles/21_delegating_your_attributes)
-article this gem allows for easy [delegation](http://apidock.com/rails/Module/delegate) of all columns of an ActiveRecord association, including
-the getter, setter, and predicate for each column.
+The primary driver for creating this gem was to create an easy way to accomplish the
+[Multiple Table Inheritance](http://techspry.com/ruby_and_rails/multiple-table-inheritance-in-rails-3/)
+pattern in active record.  delegate_all_for allows for easy [delegation](http://apidock.com/rails/Module/delegate)
+of all the columns of an ActiveRecord association, including the getter, setter, and predicate for each column.
 
 ## Usage
 
@@ -11,7 +11,7 @@ the getter, setter, and predicate for each column.
 class Parent < ActiveRecord::Base
   has_one :child
   # columns: name
-  delegate_all_for :child, except: [:sort], also_include: [:extra_method]
+  delegate_all_for :child, except: [:sort], also_include: [:extra_method], allow_nil: true
 end
 
 class Child < ActiveRecord::Base
@@ -49,3 +49,7 @@ Or install it yourself as:
 3. Commit your changes (`git commit -am 'Added some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+## Credits
+
+* Inspiration for how to do it came from ["Delegating Your Attributes"](http://killswitchcollective.com/articles/21_delegating_your_attributes)
