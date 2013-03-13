@@ -21,7 +21,7 @@ module DelegateAllFor
   # [:allow_nil]
   #   Allows accessor to be nil.  See the <tt>delegate</tt> documentation.
   def delegate_all_for(*attr_names)
-    return unless self.table_exists? && reflection.klass.table_exists?
+    return unless self.table_exists?
     options = { except: [], also_include: [], prefix: false, allow_nil: false }
     options.update(attr_names.extract_options!)
     options.assert_valid_keys(:except, :also_include, :prefix, :allow_nil)
