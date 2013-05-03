@@ -1,5 +1,7 @@
 # delegate_all_for
 
+[![Build Status](https://travis-ci.org/LessonPlanet/delegate_all_for.png)](https://travis-ci.org/LessonPlanet/delegate_all_for)
+
 The primary driver for creating this gem was to create an easy way to accomplish the
 [Multiple Table Inheritance](http://techspry.com/ruby_and_rails/multiple-table-inheritance-in-rails-3/)
 pattern in active record.  delegate_all_for allows for easy [delegation](http://apidock.com/rails/Module/delegate)
