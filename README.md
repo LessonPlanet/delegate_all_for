@@ -1,4 +1,4 @@
-# delegate_all_for
+# DelegateAllFor
 
 [![Build Status](https://travis-ci.org/LessonPlanet/delegate_all_for.png)](https://travis-ci.org/LessonPlanet/delegate_all_for)
 
